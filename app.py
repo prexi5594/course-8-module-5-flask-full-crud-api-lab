@@ -2,22 +2,9 @@ from flask import Flask, jsonify, request
 
 app = Flask(__name__)
 
-# In-memory database
+# In-memory database (DICT ONLY)
 events = []
 next_id = 1
-
-
-# ✅ REQUIRED BY TESTS
-class Event:
-    def __init__(self, id, title):
-        self.id = id
-        self.title = title
-
-    def to_dict(self):
-        return {
-            "id": self.id,
-            "title": self.title
-        }
 
 
 # Helper function
@@ -47,14 +34,15 @@ def create_event():
     if not data or "title" not in data:
         return jsonify({"error": "Title is required"}), 400
 
-    new_event = Event(next_id, data["title"])
+    new_event = {
+        "id": next_id,
+        "title": data["title"]
+    }
 
-    event_dict = new_event.to_dict()
-
-    events.append(event_dict)
+    events.append(new_event)
     next_id += 1
 
-    return jsonify(event_dict), 201
+    return jsonify(new_event), 201
 
 
 # PATCH update event
