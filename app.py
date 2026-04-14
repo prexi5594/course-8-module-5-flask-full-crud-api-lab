@@ -2,7 +2,7 @@ from flask import Flask, jsonify, request
 
 app = Flask(__name__)
 
-# In-memory "database"
+# In-memory database
 events = []
 next_id = 1
 
@@ -15,13 +15,13 @@ def find_event(event_id):
 # ✅ Root route
 @app.route("/")
 def home():
-    return jsonify({"message": "Welcome to the Events API"})
+    return jsonify({"message": "Welcome to the Events API"}), 200
 
 
 # ✅ GET all events
 @app.route("/events", methods=["GET"])
 def get_events():
-    return jsonify(events)
+    return jsonify(events), 200
 
 
 # ✅ POST create event
@@ -31,7 +31,7 @@ def create_event():
 
     data = request.get_json()
 
-    # Input validation
+    # Validate input
     if not data or "title" not in data:
         return jsonify({"error": "Title is required"}), 400
 
@@ -56,10 +56,13 @@ def update_event(event_id):
 
     data = request.get_json()
 
+    if not data:
+        return jsonify({"error": "No data provided"}), 400
+
     if "title" in data:
         event["title"] = data["title"]
 
-    return jsonify(event)
+    return jsonify(event), 200
 
 
 # ✅ DELETE event
@@ -71,7 +74,7 @@ def delete_event(event_id):
         return jsonify({"error": "Event not found"}), 404
 
     events.remove(event)
-    return jsonify({"message": "Event deleted"})
+    return "", 204
 
 
 if __name__ == "__main__":
